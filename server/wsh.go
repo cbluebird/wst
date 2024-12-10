@@ -3,10 +3,12 @@ package main
 import (
 	"context"
 	"errors"
+	"github.com/zijiren233/gwst/server/healthy"
 	"io"
 	"net"
 	"net/http"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"golang.org/x/net/websocket"
@@ -95,7 +97,9 @@ func (h *Handler) putBuffer(buffer *[]byte) {
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	atomic.AddInt32(&healthy.ActiveNum, 1)
 	h.wsServer.ServeHTTP(w, req)
+	atomic.AddInt32(&healthy.ActiveNum, -1)
 }
 
 func (h *Handler) handleWebSocket(ws *websocket.Conn) {

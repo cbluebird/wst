@@ -2,7 +2,7 @@ FROM golang:1.23-alpine AS builder
 
 COPY ./ ./
 
-RUN go build -trimpath -ldflags="-s -w" -o /wst ./server
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o /wst ./server
 
 FROM alpine:latest
 
